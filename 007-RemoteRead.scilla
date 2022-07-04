@@ -1,0 +1,21 @@
+(***************************************************)
+(*                 Scilla version                  *)
+(***************************************************)
+
+scilla_version 0
+
+(***************************************************)
+(*             The contract definition             *)
+(***************************************************)
+
+contract RemoteReadDemo()
+
+field welcome_msg : String = ""
+
+transition SetHello (addr : ByStr20 with contract field welcome_msg : ByStr20 end )
+    new_message <- & addr.welcome_msg
+end
+
+transition GetHello ()
+  r <- welcome_msg
+end

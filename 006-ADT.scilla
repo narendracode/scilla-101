@@ -1,0 +1,35 @@
+(***************************************************)
+(*                 Scilla version                  *)
+(***************************************************)
+
+scilla_version 0
+
+(***************************************************)
+(*               Associated library                *)
+(***************************************************)
+library ADTDemo
+
+type Operation =
+| Add
+| Sub
+
+type Input = | Input of Operation Uint128 Uint128
+
+
+(***************************************************)
+(*             The contract definition             *)
+(***************************************************)
+
+contract ADTDemo()
+
+transition Calculate(input: Input)
+    match input with 
+    | Input operation val1 val2 =>
+        match operation with 
+        | Add =>
+           result = builtin add val1 val2
+        | Sub =>
+            result = builtin sub val1 val2
+        end
+    end
+end

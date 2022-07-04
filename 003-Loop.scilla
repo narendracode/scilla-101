@@ -1,0 +1,20 @@
+(***************************************************)
+(*                 Scilla version                  *)
+(***************************************************)
+
+scilla_version 0
+
+(***************************************************)
+(*             The contract definition             *)
+(***************************************************)
+
+contract ForAllDemo()
+
+procedure DoSomething(addr: ByStr20)
+    (* Do something with addr *)
+end
+
+transition BatchCall (my_list : List ByStr20)
+   forall my_list DoSomething
+end
+

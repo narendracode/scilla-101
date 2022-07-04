@@ -1,0 +1,21 @@
+(***************************************************)
+(*                 Scilla version                  *)
+(***************************************************)
+
+scilla_version 0
+
+(***************************************************)
+(*               Associated library                *)
+(***************************************************)
+library HelloWorld
+
+(***************************************************)
+(*             The contract definition             *)
+(***************************************************)
+
+contract BuiltInDemo()
+
+(* Integer builtin : https://scilla.readthedocs.io/en/latest/scilla-in-depth.html?highlight=builtin#integer-types *)
+(* String builtin : https://scilla.readthedocs.io/en/latest/scilla-in-depth.html?highlight=builtin#strings *)
+(* Byte String builtin : https://scilla.readthedocs.io/en/latest/scilla-in-depth.html?highlight=builtin#byte-strings *)
+(* Map builtin : https://scilla.readthedocs.io/en/latest/scilla-in-depth.html?highlight=builtin#functional-map-operations *)

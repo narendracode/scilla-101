@@ -1,0 +1,30 @@
+(***************************************************)
+(*                 Scilla version                  *)
+(***************************************************)
+
+scilla_version 0
+
+(***************************************************)
+(*               Associated library                *)
+(***************************************************)
+library HelloWorld
+
+let something_defined_as_library  = Uint32 1
+
+(***************************************************)
+(*             The contract definition             *)
+(***************************************************)
+
+contract HelloWorld()
+
+field welcome_msg : String = ""
+
+transition SetHello (msg : String)
+    welcome_msg := msg
+end
+
+transition GetHello ()
+  r <- welcome_msg;
+  e = {_eventname: "GetHello"; msg: r};
+  event e
+end

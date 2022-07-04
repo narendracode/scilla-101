@@ -1,0 +1,31 @@
+(***************************************************)
+(*                 Scilla version                  *)
+(***************************************************)
+
+scilla_version 0
+
+(***************************************************)
+(*               Associated library                *)
+(***************************************************)
+library RemoteCallDemo
+
+let one_msg = 
+    fun (m: Message) =>
+        let e = Nil {Message} in
+            Cons {Message} m e
+
+(***************************************************)
+(*             The contract definition             *)
+(***************************************************)
+
+contract RemoteCallDemo(initial_impl: ByStr20)
+
+field impl_contract : ByStr20 = initial_impl
+
+transition SetHello(msg: String)
+  accept;
+   current_impl <- impl_contract;
+   remote_call_msg = { _tag: "SetHello"; _recipient : current_impl; _amount : _amount; msg : msg };
+   msgs = one_msg remote_call_msg;
+   send msgs
+end

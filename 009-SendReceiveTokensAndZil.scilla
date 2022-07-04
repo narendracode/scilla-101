@@ -1,0 +1,108 @@
+(***************************************************)
+(*                 Scilla version                  *)
+(***************************************************)
+
+scilla_version 0
+
+import IntUtils
+(***************************************************)
+(*               Associated library                *)
+(***************************************************)
+library SendReceiveTokenDemo
+
+type Denom =
+  | Zil
+  | Token of ByStr20 (* token address / hash *)
+type Coins = | Coins of Denom Uint128 (* denom, amount *)
+let zero = Uint128 0
+let one_msg = 
+    fun (m: Message) =>
+        let e = Nil {Message} in
+            Cons {Message} m e
+
+let zil = Zil
+
+(***************************************************)
+(*             The contract definition             *)
+(***************************************************)
+
+contract SendReceiveTokenDemo(initial_token_address : ByStr20)
+
+field token_address : ByStr20 = initial_token_address
+
+(***************************************************)
+(*             Procedures                          *)
+(***************************************************)
+procedure Send(coins : Coins, to_address : ByStr20)
+  match coins with
+  | Coins denom amount =>
+    match denom with
+    | Zil =>
+      msg = { _tag : "AddFunds"; _recipient : to_address; _amount : amount };
+      msgs = one_msg msg;
+      send msgs
+    | Token token =>
+      msg_to_token =  {
+        _tag : "Transfer"; _recipient : token; _amount : zero;
+        to : to_address; amount : amount
+      };
+      msgs = one_msg msg_to_token;
+      send msgs
+    end
+  end
+end
+
+procedure Receive(coins : Coins, initiator : ByStr20)
+  match coins with
+  | Coins denom amount =>
+    match denom with
+    | Zil =>
+      needs_refund = uint128_gt _amount amount;
+      accept;
+      match needs_refund with
+      | True =>
+        refund =
+          let refund_amount = builtin sub _amount amount in
+          Coins zil refund_amount;
+        Send refund initiator
+      | False =>
+      end
+    | Token token =>
+      msg_to_token = {
+        _tag : "TransferFrom"; _recipient : token; _amount : zero;
+        from : initiator; to : _this_address; amount : amount
+      };
+      msgs = one_msg msg_to_token;
+      send msgs
+    end
+  end
+end
+
+(***************************************************)
+(*             Transitions                         *)
+(***************************************************)
+
+transition SendZil (amount : Uint128, user_address: ByStr20)
+    (* Add a check here to ensure that only authorized user can make this transition call *)
+
+    output = Coins zil amount;
+    Send output user_address
+end
+
+transition SendToken (amount: Uint128, user_address: ByStr20)
+    (* Add a check here to ensure that only authorized user can make this transition call *)
+
+    zrc2_token_address <- token_address;
+    token = Token zrc2_token_address;
+    output = Coins token amount;
+    Send output user_address
+end
+
+transition ReceiveToken(amount: Uint128 )
+    (* Add a check here to ensure that only authorized user can make this transition call *)
+    
+    zrc2_token_address <- token_address;
+    token = Token zrc2_token_address;
+    input = Coins token amount;
+    Receive input _sender
+end

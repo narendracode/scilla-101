@@ -1,0 +1,48 @@
+(***************************************************)
+(*                 Scilla version                  *)
+(***************************************************)
+
+scilla_version 0
+
+
+(***************************************************)
+(*             The contract definition             *)
+(***************************************************)
+
+contract HelloWorld(
+    initial_welcome_msg: String,
+    initial_owner: ByStr20
+)
+
+field welcome_msg : String = initial_welcome_msg
+field owner: ByStr20 = initial_owner
+
+procedure RequireOwner(addr: ByStr20)
+  contract_owner <- owner;
+  is_owner = builtin eq contract_owner addr;
+  match is_owner with
+  | False =>
+      e = { _exception : "SenderIsNotAdmin" };
+      throw e
+  | True =>
+    (* Do Nothing *)
+  end
+end
+
+procedure DoSetHello(msg: String)
+    welcome_msg := msg;
+    e = {_eventname: "SetHello"; msg: msg};
+    event e
+end
+
+(* Only owner can set message *)
+transition SetHello (msg : String)
+    RequireOwner _sender;
+    DoSetHello msg
+end
+
+transition GetHello ()
+  r <- welcome_msg;
+  e = {_eventname: "GetHello"; msg: r};
+  event e
+end

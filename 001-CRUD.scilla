@@ -1,0 +1,26 @@
+(***************************************************)
+(*                 Scilla version                  *)
+(***************************************************)
+
+scilla_version 0
+
+
+(***************************************************)
+(*             The contract definition             *)
+(***************************************************)
+
+contract HelloWorld(initial_welcome_msg: String)
+
+field welcome_msg : String = initial_welcome_msg
+
+transition SetHello (msg : String)
+    welcome_msg := msg;
+    e = {_eventname: "SetHello"; msg: msg};
+    event e
+end
+
+transition GetHello ()
+  r <- welcome_msg;
+  e = {_eventname: "GetHello"; msg: r};
+  event e
+end
